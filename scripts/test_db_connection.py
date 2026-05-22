@@ -28,6 +28,8 @@ def main() -> int:
     try:
         conn = get_connection(settings)
     except Exception as exc:
+
+        
         print(f"FAILED: {exc}")
         print("\nCheck .env (copy from .env.example) and that MySQL is running in phpMyAdmin/XAMPP/MAMP.")
         return 1
