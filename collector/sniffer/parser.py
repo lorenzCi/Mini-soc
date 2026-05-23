@@ -5,10 +5,11 @@ Scapy already decoded layers for us; we only extract the fields we care about
 for IDS (IPs, ports, protocol, TCP flags, size).
 """
 
+import hashlib
 from datetime import datetime, timezone
 
 from scapy.layers.inet import ICMP, IP, TCP, UDP
-from scapy.packet import Packet
+from scapy.packet import Packet, Raw
 
 from collector.sniffer.models import PacketRecord, Protocol
 
@@ -21,6 +22,18 @@ def _protocol_from_packet(packet: Packet) -> Protocol:
     if packet.haslayer(ICMP):
         return Protocol.ICMP
     return Protocol.OTHER
+
+
+def _payload_hash(packet: Packet) -> str | None:
+    """SHA-256 hex of L4+ payload (matches packets.payload_hash CHAR(64))."""
+    payload = b""
+    if packet.haslayer(Raw):
+        payload = bytes(packet[Raw].load)
+    elif packet.haslayer(IP):
+        payload = bytes(packet[IP].payload)
+    if not payload:
+        return None
+    return hashlib.sha256(payload).hexdigest()
 
 
 def _tcp_flags(packet: Packet) -> str | None:
@@ -70,4 +83,5 @@ def parse_packet(packet: Packet, captured_at: datetime | None = None) -> PacketR
         protocol=_protocol_from_packet(packet),
         packet_size=len(packet),
         tcp_flags=_tcp_flags(packet),
+        payload_hash=_payload_hash(packet),
     )
