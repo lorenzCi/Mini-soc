@@ -18,3 +18,20 @@ def ip_to_varbinary(ip: str | None) -> bytes | None:
         except OSError:
             continue
     return None
+
+
+def varbinary_to_ip(value: bytes | None) -> str | None:
+    """
+    Convert VARBINARY(16) bytes back to an IPv4/IPv6 string.
+    Accepts 4 bytes (IPv4) or 16 bytes (IPv6). Anything else returns None.
+    """
+    if not value:
+        return None
+    try:
+        if len(value) == 4:
+            return socket.inet_ntop(socket.AF_INET, value)
+        if len(value) == 16:
+            return socket.inet_ntop(socket.AF_INET6, value)
+    except OSError:
+        return None
+    return None

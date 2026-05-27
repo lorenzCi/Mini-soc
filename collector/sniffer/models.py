@@ -28,6 +28,7 @@ class PacketRecord:
     packet_size: int
     tcp_flags: str | None = None
     payload_hash: str | None = None
+    payload_preview: str | None = None
 
     def summary(self) -> str:
         """One-line text for the terminal (learning / debugging)."""

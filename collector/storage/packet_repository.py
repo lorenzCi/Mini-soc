@@ -17,9 +17,10 @@ INSERT INTO packets (
     protocol,
     packet_size,
     tcp_flags,
-    payload_hash
+    payload_hash,
+    payload_preview
 ) VALUES (
-    %s, %s, %s, %s, %s, %s, %s, %s, %s
+    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
 )
 """
 
@@ -49,6 +50,7 @@ def insert_packet(conn: pymysql.Connection, record: PacketRecord) -> int:
                 record.packet_size,
                 record.tcp_flags,
                 record.payload_hash,
+                record.payload_preview,
             ),
         )
         return int(cur.lastrowid)

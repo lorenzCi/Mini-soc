@@ -13,7 +13,7 @@ from scapy.packet import Packet
 
 def capture_live(
     *,
-    count: int = 10,
+    count: int | None = 10,
     interface: str | None = None,
     bpf_filter: str | None = None,
     on_packet: Callable[[Packet], None],
@@ -24,10 +24,13 @@ def capture_live(
     interface: e.g. "en0" on Mac Wi‑Fi; None = Scapy default interface
     bpf_filter: optional Berkeley filter, e.g. "tcp port 80"
     """
-    sniff(
-        iface=interface,
-        filter=bpf_filter,
-        count=count,
-        prn=on_packet,
-        store=False,
-    )
+    kwargs: dict = {
+        "filter": bpf_filter,
+        "prn": on_packet,
+        "store": False,
+    }
+    if count is not None:
+        kwargs["count"] = count
+    if interface:
+        kwargs["iface"] = interface
+    sniff(**kwargs)
