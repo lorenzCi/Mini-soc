@@ -29,6 +29,14 @@ def _op_contains(actual: Any, expected: Any) -> bool:
     return str(expected) in str(actual)
 
 
+def _op_not_contains(actual: Any, expected: Any) -> bool:
+    if actual is None:
+        return True
+    if expected is None:
+        return False
+    return str(expected) not in str(actual)
+
+
 def _op_regex(actual: Any, pattern: Any) -> bool:
     if actual is None or pattern is None:
         return False
@@ -70,12 +78,26 @@ _OPS = {
     "eq": _op_eq,
     "in": _op_in,
     "contains": _op_contains,
+    "not_contains": _op_not_contains,
     "regex": _op_regex,
     "gt": _op_gt,
     "gte": _op_gte,
     "lt": _op_lt,
     "lte": _op_lte,
 }
+
+
+def _coerce_value(field: str, actual: Any, expected: Any) -> tuple[Any, Any]:
+    """Normalize port/number comparisons (JSON ints vs DB ints vs strings)."""
+    if field.endswith("_port") or field == "packet_size":
+        try:
+            if actual is not None:
+                actual = int(actual)
+            if expected is not None:
+                expected = int(expected)
+        except (TypeError, ValueError):
+            pass
+    return actual, expected
 
 
 def _evaluate_clause(packet: PacketRow, clause: dict[str, Any]) -> tuple[bool, dict[str, Any]]:
@@ -94,6 +116,8 @@ def _evaluate_clause(packet: PacketRow, clause: dict[str, Any]) -> tuple[bool, d
         actual = _get_field(packet, field)
     except KeyError:
         return False, {"error": "unknown_field", "field": field}
+
+    actual, value = _coerce_value(field, actual, value)
 
     fn = _OPS.get(op)
     if fn is None:

@@ -12,6 +12,11 @@ from shared.net.ip import ip_to_varbinary
 _OPEN_STATUSES = ("new", "acknowledged", "investigating")
 
 
+def _correlation_key_valid(packet: PacketRow) -> bool:
+    """Avoid merging unrelated traffic when IPs are missing (e.g. non-IP frames)."""
+    return bool(packet.src_ip or packet.dst_ip)
+
+
 def _to_mysql_datetime(value: datetime) -> datetime:
     """MySQL DATETIME has no timezone; store UTC as naive."""
     if value.tzinfo is not None:
@@ -150,7 +155,7 @@ def _correlate_alert(
             UPDATE alerts
             SET
               event_count = event_count + 1,
-              last_seen_at = %s,
+              last_seen_at = GREATEST(last_seen_at, %s),
               evidence = %s
             WHERE id = %s
             """,
@@ -184,7 +189,7 @@ def process_rule_match(
 
     Correlation key: rule_id + src/dst IP + ports + protocol, within time window.
     """
-    if correlate_window_secs > 0:
+    if correlate_window_secs > 0 and _correlation_key_valid(packet):
         window_start = packet.captured_at
         if window_start.tzinfo is None:
             window_start = window_start.replace(tzinfo=timezone.utc)

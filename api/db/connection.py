@@ -1,5 +1,4 @@
-from contextlib import contextmanager
-from typing import Generator
+from collections.abc import Generator
 
 import pymysql
 from pymysql.cursors import DictCursor
@@ -11,20 +10,14 @@ def get_connection(settings: DatabaseSettings | None = None) -> pymysql.Connecti
     kwargs = connection_kwargs(settings)
     kwargs["cursorclass"] = DictCursor
     conn = pymysql.connect(**kwargs)
-    conn.autocommit(False)
+    conn.autocommit(True)
     return conn
 
 
-@contextmanager
-def db_session(
-    settings: DatabaseSettings | None = None,
-) -> Generator[pymysql.Connection, None, None]:
-    conn = get_connection(settings)
+def get_db() -> Generator[pymysql.Connection, None, None]:
+    """FastAPI dependency: one read-only connection per request."""
+    conn = get_connection()
     try:
         yield conn
-        conn.commit()
-    except Exception:
-        conn.rollback()
-        raise
     finally:
         conn.close()

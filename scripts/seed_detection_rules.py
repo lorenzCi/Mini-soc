@@ -241,7 +241,7 @@ def main() -> int:
                 "all": [
                     {"field": "protocol", "op": "eq", "value": "tcp"},
                     {"field": "tcp_flags", "op": "contains", "value": "S"},
-                    {"field": "tcp_flags", "op": "regex", "value": "^(?!.*A).*$"},
+                    {"field": "tcp_flags", "op": "not_contains", "value": "A"},
                 ]
             },
         },
