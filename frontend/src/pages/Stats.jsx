@@ -40,6 +40,26 @@ export default function Stats() {
           <div className="card-label">Alert totali</div>
           <div className="card-value">{stats.data?.total_alerts ?? 0}</div>
         </div>
+        <div className="card">
+          <div className="card-label">Pacchetti totali</div>
+          <div className="card-value">{stats.data?.total_packets ?? 0}</div>
+        </div>
+        <div className="card">
+          <div className="card-label">Regole attive</div>
+          <div className="card-value">
+            {stats.data?.enabled_rules ?? 0}
+            <span
+              style={{
+                fontSize: "0.9rem",
+                color: "var(--text-muted)",
+                fontWeight: 400,
+              }}
+            >
+              {" "}
+              / {stats.data?.total_rules ?? 0}
+            </span>
+          </div>
+        </div>
       </div>
 
       <div className="chart-row">

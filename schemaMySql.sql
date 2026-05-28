@@ -63,6 +63,8 @@ CREATE TABLE packets (
 
     payload_hash CHAR(64),
 
+    payload_preview TEXT NULL,
+
     created_at DATETIME(3)
         DEFAULT CURRENT_TIMESTAMP(3),
 

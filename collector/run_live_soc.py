@@ -118,7 +118,6 @@ def main() -> int:
     )
 
     with db_session() as conn:
-        conn.autocommit(False)
         rules = load_enabled_rules(conn)
         print(f"Loaded {len(rules)} enabled rule(s).")
 

@@ -1,6 +1,6 @@
 import pymysql
 
-from api.db.serialize import row_to_json
+from shared.db.serialize import row_to_json
 
 SQL_LIST_RULES = """
 SELECT

@@ -1,6 +1,6 @@
 import pymysql
 
-from api.db.serialize import row_to_json
+from shared.db.serialize import row_to_json
 
 # Latest captured packets (telemetry tail).
 SQL_LIST_PACKETS = """

@@ -7,20 +7,15 @@ const SEVERITIES = ["critical", "high", "medium", "low"];
 
 export default function Dashboard() {
   const stats = useFetch(() => api.stats(), []);
-  const rules = useFetch(() => api.rules(), []);
-  const packets = useFetch(() => api.packets(200), []);
   const alerts = useFetch(() => api.alerts(200), []);
 
-  const loading = stats.loading || rules.loading;
-  const error = stats.error || rules.error;
+  const loading = stats.loading;
+  const error = stats.error;
 
   if (loading) return <p className="loading">Caricamento dashboard…</p>;
   if (error) return <div className="error-box">{error}</div>;
 
   const bySev = stats.data?.alerts_by_severity || {};
-  const activeRules =
-    rules.data?.items?.filter((r) => r.enabled).length ?? 0;
-  const totalRules = rules.data?.count ?? 0;
   const timeline = groupAlertsByDay(alerts.data?.items || []);
 
   return (
@@ -36,13 +31,13 @@ export default function Dashboard() {
           <div className="card-value">{stats.data?.total_alerts ?? 0}</div>
         </div>
         <div className="card">
-          <div className="card-label">Pacchetti (campione)</div>
-          <div className="card-value">{packets.data?.count ?? "—"}</div>
+          <div className="card-label">Pacchetti totali</div>
+          <div className="card-value">{stats.data?.total_packets ?? 0}</div>
         </div>
         <div className="card">
           <div className="card-label">Regole attive</div>
           <div className="card-value">
-            {activeRules}
+            {stats.data?.enabled_rules ?? 0}
             <span
               style={{
                 fontSize: "0.9rem",
@@ -51,7 +46,7 @@ export default function Dashboard() {
               }}
             >
               {" "}
-              / {totalRules}
+              / {stats.data?.total_rules ?? 0}
             </span>
           </div>
         </div>

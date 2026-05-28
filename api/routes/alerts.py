@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, Query
 import pymysql
 
-from api.db.connection import get_db
+from shared.db.connection import get_db
 from api.services import alerts as alerts_service
 
 router = APIRouter(tags=["alerts"])
