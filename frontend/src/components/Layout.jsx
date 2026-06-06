@@ -15,7 +15,7 @@ export default function Layout() {
       <aside className="sidebar">
         <div className="sidebar-brand">
           <h1>Mini SOC</h1>
-          <p>IDS / Detection Console</p>
+         
         </div>
         <nav>
           {NAV.map(({ to, label }) => (
