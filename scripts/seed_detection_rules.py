@@ -245,6 +245,19 @@ def main() -> int:
                 ]
             },
         },
+        {
+            "name": "TCP to reverse shell port (4444)",
+            "description": "Detect TCP traffic to port 4444 (common Metasploit/reverse-shell listener).",
+            "severity": "critical",
+            "rule_type": "signature",
+            "enabled": True,
+            "conditions": {
+                "all": [
+                    {"field": "protocol", "op": "eq", "value": "tcp"},
+                    {"field": "dst_port", "op": "eq", "value": 4444},
+                ]
+            },
+        },
     ]
 
     for r in rules:
