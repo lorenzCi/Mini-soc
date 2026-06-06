@@ -141,7 +141,7 @@ miniSoc/
 ├── screenshots/
 ├── README.md
 ├── requirements.txt
-└── schemaMySql.sql
+└── schema.sql
 ```
 
 ---
