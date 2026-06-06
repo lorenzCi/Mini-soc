@@ -166,7 +166,7 @@ pip install -r requirements.txt
 Import the database schema:
 
 ```sql
-schemaMySql.sql
+schema.sql
 ```
 
 Configure your database credentials inside the `.env` file.
